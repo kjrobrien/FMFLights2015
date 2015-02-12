@@ -1,5 +1,6 @@
 #include "LPD8806.h"
 #include "SPI.h" // Comment out this line if using Trinket or Gemma
+#include <Wire.h>
 #ifdef __AVR_ATtiny85__
  #include <avr/power.h>
 #endif
