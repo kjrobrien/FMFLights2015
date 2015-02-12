@@ -1,5 +1,6 @@
 #include "LPD8806.h"
 #include "SPI.h" // Comment out this line if using Trinket or Gemma
+#include <Wire.h>
 #ifdef __AVR_ATtiny85__
  #include <avr/power.h>
 #endif
@@ -29,7 +30,8 @@ LPD8806 strip = LPD8806(nLEDs, dataPin, clockPin);
 //LPD8806 strip = LPD8806(nLEDs);
 
 void setup() {
-
+  Wire.begin(1); //Start I2C Bus as a Slave (Device Number 1)
+  Wire.onReceive(receiveEvent);
   // Start up the LED strip
   strip.begin();
 
@@ -39,6 +41,15 @@ void setup() {
 
 
 void loop() {
+  if (x == "GREEN") {
+    colorChase(strip.Color(  0, 127,   0), 50); // Green
+  }
+  if (x == "RED") {
+    colorChase(strip.Color(127,   0,   0), 50); // Red
+  }
+  if (x == "BLUE") {
+    colorChase(strip.Color(  0,   0, 127), 50); // Blue
+  }
 /*
   // Send a simple pixel chase in...
   colorChase(strip.Color(127, 127, 127), 50); // White
@@ -68,7 +79,9 @@ void loop() {
   theaterChaseRainbow(50);
   */
 }
-
+void receiveEvent(int howMany) {
+  x = Wire.receive();
+}
 void rainbow(uint8_t wait) {
   int i, j;
    
@@ -191,3 +204,4 @@ uint32_t Wheel(uint16_t WheelPos)
   }
   return(strip.Color(r,g,b));
 }
+
