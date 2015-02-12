@@ -10,11 +10,13 @@
 /*****************************************************************************/
 
 // Number of RGB LEDs in strand:
-int nLEDs = 80;
+int nLEDs = 15;
 
 // Chose 2 pins for output; can be any valid output pins:
 int dataPin  = 13;
 int clockPin = 12;
+int bluePin = 11;
+int redPin = 10;
 
 // First parameter is the number of LEDs in the strand.  The LED strips
 // are 32 LEDs per meter but you can extend or cut the strip.  Next two
@@ -30,8 +32,9 @@ LPD8806 strip = LPD8806(nLEDs, dataPin, clockPin);
 //LPD8806 strip = LPD8806(nLEDs);
 
 void setup() {
-  Wire.begin(1); //Start I2C Bus as a Slave (Device Number 1)
-  Wire.onReceive(receiveEvent);
+
+  pinMode(bluePin, INPUT);
+  pinMode(redPin, INPUT);
   // Start up the LED strip
   strip.begin();
 
@@ -41,14 +44,16 @@ void setup() {
 
 
 void loop() {
-  if (x == "GREEN") {
-    colorChase(strip.Color(  0, 127,   0), 50); // Green
-  }
-  if (x == "RED") {
+  blue = digitalRead(bluePin);
+  red = digitalRead(redPin);
+  if (blue == HIGH) {
     colorChase(strip.Color(127,   0,   0), 50); // Red
   }
-  if (x == "BLUE") {
+  else if (red == HIGH) {
     colorChase(strip.Color(  0,   0, 127), 50); // Blue
+  }
+  else {
+    colorChase(strip.Color(  0, 127,   0), 50); // Green
   }
 /*
   // Send a simple pixel chase in...
@@ -79,9 +84,7 @@ void loop() {
   theaterChaseRainbow(50);
   */
 }
-void receiveEvent(int howMany) {
-  x = Wire.receive();
-}
+
 void rainbow(uint8_t wait) {
   int i, j;
    
